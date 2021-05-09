@@ -28,7 +28,7 @@ function resetDiceRoller() {
     $("#decreaseDiceButton").attr("disabled", false);
     $("#increaseDiceButton").attr("disabled", false);
     for (let i = 1; i < 6; i++) {
-        $("#dice" + i).attr("src", "/img/dice-success.png");
+        $("#dice" + i).attr("src", "./img/dice-success.png");
         $("#dice" + i).removeClass("dice-critical");
     }
 
@@ -126,7 +126,7 @@ function animateDice(diceNumber) {
         window.clearInterval(diceRollerManager[index].interval);
         diceRollerManager[index].interval = null;
         diceRollerManager[index].rolling = false;
-        $("#dice" + diceNumber).attr("src", "/img/dice-" + diceRollerManager[index].result + ".png");
+        $("#dice" + diceNumber).attr("src", "./img/dice-" + diceRollerManager[index].result + ".png");
         checkDiceResult(diceNumber);
         return;
     }
@@ -135,7 +135,7 @@ function animateDice(diceNumber) {
     if (diceRollerManager[index].animationStep >= diceFaces.length) {
         diceRollerManager[index].animationStep = 0;
     }
-    $("#dice" + diceNumber).attr("src", "/img/dice-" + diceFaces[diceRollerManager[index].animationStep] + ".png");
+    $("#dice" + diceNumber).attr("src", "./img/dice-" + diceFaces[diceRollerManager[index].animationStep] + ".png");
 
     let randomNumber = utilityService.getRandomNumberFromRange(1, 6) - 1;
     let randomResult = possibleResults[randomNumber];

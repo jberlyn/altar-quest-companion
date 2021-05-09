@@ -11,6 +11,6 @@ This is a companion app for the board game [Altar Quest](https://boardgamegeek.c
 
 ## Building the Application
 
-This application is just a standard HTML/JavaScript/CSS application. It uses [Workbox](https://developers.google.com/web/tools/workbox) to build the Progressive Web Application manifest file. If you make changes to the code, you should just run `workbox injectManifest` in the root directory, to ensure that the cache has been updated.
+This application is just a standard HTML/JavaScript/CSS application. It uses [Workbox](https://developers.google.com/web/tools/workbox) to regenerate the Progressive Web Application service worker. If you make changes to the code, you should just run `workbox injectManifest` in the root directory, to ensure that the cache has been updated.
 
 You can run the application under any basic web server. I personally just use the [http-server] (https://www.npmjs.com/package/http-server) NodeJS package.
