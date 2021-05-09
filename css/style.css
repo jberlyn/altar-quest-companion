@@ -1,0 +1,80 @@
+body {
+    overscroll-behavior-y: contain;
+    background: url("../img/bg.png");
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.update-panel {
+    margin-top: -50px;
+}
+
+.update-panel-alert {
+    border-radius: 0;
+}
+
+.title-text {
+    color: #ffffff;
+    text-shadow: 2px 2px #000000;
+}
+
+.form-control {
+    background-color: rgba(55, 90, 127, 0.7) !important;
+    border-width: 0px;
+    color: #ffffff;
+}
+
+.input-group-prepend {
+    margin-right: 0px;
+}
+
+.input-group-append {
+    margin-left: 0px;
+}
+
+.card-main {
+    background: url("../img/card-bg.png");
+    color: #000000;
+}
+
+.token-image {
+    max-height: 45px;
+}
+
+.dice-image {
+    height: 55px;
+    width: 55px;
+    margin: 3px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+}
+
+.dice-critical {
+    cursor: pointer;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 0 0 #ff0000;
+	transform: scale(1);
+	animation: pulse 2s infinite;
+}
+
+.footer-text {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1.0);
+		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.9);
+	}
+
+	70% {
+        transform: scale(1.2);
+		box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(1.0);
+		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+	}
+}

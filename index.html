@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="theme-color" content="#343a40" />
+        <meta name="Description" content="A companion app for the board game Altar Quest." />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+        <link rel="stylesheet" href="/css/bootstrap-darkly.min.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <title>Altar Quest Companion</title>
+    </head>
+
+    <body>
+        <div class="update-panel d-none" id="updatePanel">
+            <div class="alert alert-info update-panel-alert">
+                A new update for the Altar Quest companion app is now available.
+                <a href="" onclick="updateApp()">Tap here to get the latest update</a>.
+            </div>
+        </div>
+
+        <div class="container text-center">
+            <!-- Header -->
+            <div class="row">
+                <div class="col-12">
+                    <img src="/img/aq-logo.png" class="img-fluid" alt="Altar Quest Logo" />
+                    <h3 class="title-text" id="pageTitle">Token Tracker</h3>
+                </div>
+            </div>
+
+            <!-- Home Container -->
+            <div id="homeContainer" class="d-none">
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button
+                            class="btn btn-primary btn-block btn-lg"
+                            title="Token Tracker"
+                            onclick="pageService.changePage('tokenTracker')"
+                        >
+                            Token Tracker
+                        </button>
+                        <button
+                            class="btn btn-primary btn-block btn-lg"
+                            title="Game Generator"
+                            onclick="pageService.changePage('gameGenerator')"
+                        >
+                            Game Generator
+                        </button>
+                        <button
+                            class="btn btn-primary btn-block btn-lg"
+                            title="Dice Roller"
+                            onclick="pageService.changePage('diceRoller')"
+                        >
+                            Dice Roller
+                        </button>
+                        <button
+                            class="btn btn-secondary btn-block btn-lg"
+                            title="Change Settings"
+                            onclick="pageService.changePage('settings')"
+                        >
+                            <span class="fa fa-fw fa-cog"></span> Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="row mt-3">
+                    <div class="col-12 text-center mt-3">
+                        <p class="small footer-text mb-3">
+                            This companion app was created by
+                            <a href="mailto:jberlyn@gmail.com" target="_blank" rel="noreferrer">Jordan Berlyn</a>.
+                            Please consider
+                            <a href="https://paypal.me/jordanberlyn" target="_blank" rel="noreferrer"
+                                >making a small donation</a
+                            >
+                            to support the development. Altar Quest and all associated artwork is created and owned by
+                            Blacklist Games.
+                        </p>
+                        <p class="small footer-text mb-3" id="applicationVersion"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token Tracker Container -->
+            <div id="tokenTrackerContainer" class="d-none">
+                <div class="row mt-3">
+                    <div class="col-12 mb-3 d-none" id="allTokensDisabledPanel">
+                        <div class="card card-main">
+                            <div class="card-body text-left">
+                                <p class="mb-0">
+                                    Oops. It appears you have all token types disabled. To use the token tracker, you
+                                    must enable at least one type of token in the settings page.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="actionTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row align-middle">
+                                    <div class="col-4">
+                                        <img
+                                            src="/img/action-active.png"
+                                            id="action1"
+                                            onclick="tokenTrackerService.toggleAction(0)"
+                                            class="img-fluid token-image"
+                                            title="Toggle First Action"
+                                            alt="Toggle First Action"
+                                        />
+                                    </div>
+                                    <div class="col-4">
+                                        <img
+                                            src="/img/action-active.png"
+                                            id="action2"
+                                            onclick="tokenTrackerService.toggleAction(1)"
+                                            class="img-fluid token-image"
+                                            title="Toggle Second Action"
+                                            alt="Toggle Second Action"
+                                        />
+                                    </div>
+                                    <div class="col-4">
+                                        <img
+                                            src="/img/action-active.png"
+                                            id="action3"
+                                            onclick="tokenTrackerService.toggleAction(2)"
+                                            class="img-fluid token-image"
+                                            title="Toggle Third Action"
+                                            alt="Toggle Third Action"
+                                        />
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-primary btn-block btn-lg"
+                                            onclick="tokenTrackerService.resetActions()"
+                                            id="endTurnButton"
+                                        >
+                                            End Turn
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="damageTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img
+                                            src="/img/damage.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Damage"
+                                            alt="Damage Token"
+                                        />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('damage')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Damage"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="damage"
+                                                aria-label="Damage Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('damage')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Damage"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="armorTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img
+                                            src="/img/armor.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Armor"
+                                            alt="Armor Token"
+                                        />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('armor')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Armor"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="armor"
+                                                aria-label="Armor Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('armor')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Armor"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="focusTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img
+                                            src="/img/focus.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Focus (max of 5)"
+                                            alt="Focus Token"
+                                        />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('focus')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Focus"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="focus"
+                                                aria-label="Focus Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('focus')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Focus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="threatTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img
+                                            src="/img/threat.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Threat"
+                                            alt="Threat Token"
+                                        />
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('threat')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Threat"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="threat"
+                                                aria-label="Threat Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('threat')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Threat"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="supplyTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3 col-lg-3">
+                                        <img
+                                            src="/img/supply.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Supply (shared with group)"
+                                            alt="Supply Token"
+                                        />
+                                    </div>
+                                    <div class="col-9 col-lg-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('supply')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Supply"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="supply"
+                                                aria-label="Supply Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('supply')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Supply"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="inspirationTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3 col-lg-3">
+                                        <img
+                                            src="/img/inspiration.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Inspiration (Gavin Ulrich)"
+                                            alt="Inspiration Token"
+                                        />
+                                    </div>
+                                    <div class="col-9 col-lg-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('inspiration')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Inspiration"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="inspiration"
+                                                aria-label="Inspiration Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('inspiration')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Inspiration"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="snareTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3 col-lg-3">
+                                        <img
+                                            src="/img/snare.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Snare (Karon Harrick)"
+                                            alt="Snare Token"
+                                        />
+                                    </div>
+                                    <div class="col-9 col-lg-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('snare')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Snare"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="snare"
+                                                aria-label="Snare Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('snare')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Snare"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 mb-3" id="melodyTokenPanel">
+                        <div class="card card-main h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3 col-lg-3">
+                                        <img
+                                            src="/img/melody.png"
+                                            class="img-fluid token-image"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Melody (Willow Banks)"
+                                            alt="Melody Token"
+                                        />
+                                    </div>
+                                    <div class="col-9 col-lg-9">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.decreaseTokenValue('melody')"
+                                                >
+                                                    <i class="fa fa-fw fa-minus" title="Decrease Melody"></i>
+                                                </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                class="form-control text-center"
+                                                id="melody"
+                                                aria-label="Melody Value"
+                                                disabled
+                                            />
+                                            <div class="input-group-append">
+                                                <button
+                                                    class="btn btn-primary"
+                                                    onclick="tokenTrackerService.increaseTokenValue('melody')"
+                                                >
+                                                    <i class="fa fa-fw fa-plus" title="Increase Melody"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button
+                            class="btn btn-primary btn-lg btn-block"
+                            data-toggle="modal"
+                            data-target="#resetTokensModal"
+                            title="Reset Tokens"
+                        >
+                            Reset Tokens
+                        </button>
+                        <button
+                            class="btn btn-secondary btn-lg btn-block"
+                            title="Return To Menu"
+                            onclick="pageService.changePage('home')"
+                        >
+                            <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="resetTokensModal" tabindex="-1" role="dialog" data-backdrop="static">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Reset Tokens</h5>
+                            </div>
+                            <div class="modal-body text-left">
+                                <p>Are you sure you want to reset all tokens?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-dismiss="modal"
+                                    title="Cancel Token Reset"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary"
+                                    onclick="tokenTrackerService.reset()"
+                                    title="Confirm Token Reset"
+                                >
+                                    Yes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Generator Container -->
+            <div id="gameGeneratorContainer" class="d-none">
+                <div id="createGameContainer">
+                    <div class="card card-main mt-3">
+                        <div class="card-body text-left">
+                            <p class="mb-0">
+                                The game generator will randomly select a set of decks/cards for you to play a game
+                                with. This includes heroes, threats, villains, quests, encounters, altars and features.
+                                The selections are dependent on the products you own, which can be modified in the
+                                Settings screen.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card card-main mt-3 text-left">
+                        <div class="card-body">
+                            <h5 class="card-title">Number of Players</h5>
+                            <p>Select anywhere between one and four players.</p>
+                            <div class="input-group input-group-lg">
+                                <div class="input-group-prepend">
+                                    <button
+                                        class="btn btn-primary"
+                                        title="Decrease Players"
+                                        onclick="decreasePlayerCount()"
+                                    >
+                                        <i class="fa fa-fw fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input
+                                    type="text"
+                                    class="form-control text-center"
+                                    id="playerCount"
+                                    aria-label="Player Count"
+                                    disabled
+                                />
+                                <div class="input-group-append">
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="increasePlayerCount()"
+                                        title="Increase Players"
+                                    >
+                                        <i class="fa fa-fw fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="gameTypeContainer">
+                        <div class="card card-main mt-3 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Game Type</h5>
+                                <p>
+                                    Some expansions offer different ways to play the game. Select one of the game type
+                                    options below.
+                                </p>
+                                <button
+                                    class="btn btn-success btn-lg btn-block"
+                                    id="standardGameButton"
+                                    onclick="selectGameType('standard')"
+                                >
+                                    <i class="fa fa-fw fa-check" id="standardGameButtonIcon"></i> Standard
+                                </button>
+                                <button
+                                    class="btn btn-secondary btn-lg btn-block"
+                                    id="encounterGameButton"
+                                    onclick="selectGameType('encounter')"
+                                >
+                                    <i class="fa fa-fw fa-check" id="encounterGameButtonIcon"></i> Encounter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button
+                                class="btn btn-primary btn-block btn-lg"
+                                title="Generate Game"
+                                onclick="generateGame()"
+                            >
+                                Generate Game
+                            </button>
+                            <button
+                                class="btn btn-secondary btn-lg btn-block"
+                                title="Return To Menu"
+                                onclick="pageService.changePage('home')"
+                            >
+                                <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="invalidGameGeneratorContainer">
+                    <div class="card card-main mt-3">
+                        <div class="card-body text-left">
+                            <p class="mb-0">
+                                You must own the core game to be able to use the game generator. If you own the core
+                                game, head over to the settings section and enable it in your list of owned products.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button
+                                class="btn btn-secondary btn-block btn-lg"
+                                title="Return To Menu"
+                                onclick="pageService.changePage('home')"
+                            >
+                                <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="viewGeneratedGameContainer">
+                    <div class="row mt-3">
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameHeroesPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Heroes</h5>
+                                    <ul id="generatedGameHeroes" class="mb-0"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameVillainPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Villain Deck</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameVillain"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameThreatPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Threat Deck</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameThreat"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameQuestPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Quest Deck</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameQuest"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameEncounterPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Encounter Deck</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameEncounter"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameAltarPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Altar Card</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameAltar"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4 mb-3" id="generatedGameFeaturesPanel">
+                            <div class="card card-main h-100">
+                                <div class="card-body text-left">
+                                    <h5 class="card-title font-weight-bold">Feature Deck</h5>
+                                    <ul class="mb-0">
+                                        <li id="generatedGameFeatures"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button
+                                class="btn btn-primary btn-block btn-lg"
+                                title="Generate Game"
+                                onclick="pageService.changePage('gameGenerator')"
+                            >
+                                Generate New Game
+                            </button>
+                            <button
+                                class="btn btn-secondary btn-block btn-lg"
+                                title="Return To Menu"
+                                onclick="pageService.changePage('home')"
+                            >
+                                <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dice Roller Container -->
+            <div id="diceRollerContainer" class="d-none">
+                <div class="card card-main mt-3 text-left">
+                    <div class="card-body">
+                        <h5 class="card-title">How many dice to roll?</h5>
+                        <p>
+                            Critical rolls count as a success plus a reroll. You must select the critical dice to reroll
+                            them. Your total results will be output once all dice rolling has been resolved.
+                        </p>
+                        <div class="input-group input-group-lg mb-3">
+                            <div class="input-group-prepend">
+                                <button
+                                    class="btn btn-primary"
+                                    title="Decrease Dice"
+                                    onclick="decreaseDiceCount()"
+                                    id="decreaseDiceButton"
+                                >
+                                    <i class="fa fa-fw fa-minus"></i>
+                                </button>
+                            </div>
+                            <input
+                                type="text"
+                                class="form-control text-center"
+                                id="diceCount"
+                                aria-label="Dice Count"
+                                disabled
+                            />
+                            <div class="input-group-append">
+                                <button
+                                    class="btn btn-primary"
+                                    onclick="increaseDiceCount()"
+                                    title="Increase Dice"
+                                    id="increaseDiceButton"
+                                >
+                                    <i class="fa fa-fw fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-lg btn-block" onclick="rollDice()" id="rollDiceButton">
+                            Roll Dice
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card card-main mt-3">
+                    <div class="card-body">
+                        <img src="/img/dice-success.png" class="dice-image" id="dice1" onclick="rerollCritical(1)" />
+                        <img src="/img/dice-success.png" class="dice-image" id="dice2" onclick="rerollCritical(2)" />
+                        <img src="/img/dice-success.png" class="dice-image" id="dice3" onclick="rerollCritical(3)" />
+                        <img src="/img/dice-success.png" class="dice-image" id="dice4" onclick="rerollCritical(4)" />
+                        <img src="/img/dice-success.png" class="dice-image" id="dice5" onclick="rerollCritical(5)" />
+                    </div>
+                </div>
+
+                <div class="card card-main mt-3 d-none" id="diceResultsPanel">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Dice Results</h5>
+                        <p class="mb-0" id="totalSuccess"></p>
+                        <p class="mb-0" id="totalFocus"></p>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button
+                            class="btn btn-secondary btn-block btn-lg"
+                            title="Return To Menu"
+                            onclick="pageService.changePage('home')"
+                        >
+                            <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Container -->
+            <div id="settingsContainer" class="d-none">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-main h-100 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Which tokens to show?</h5>
+                                <h6 class="card-subtitle">
+                                    You may not want to show all token types in the token tracker. You can enable or
+                                    disable which types appear below.
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="actionTokenButton"
+                                            onclick="settingsService.toggleToken('action')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="actionTokenButtonIcon"></span> Actions
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="damageTokenButton"
+                                            onclick="settingsService.toggleToken('damage')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="damageTokenButtonIcon"></span> Damage
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="armorTokenButton"
+                                            onclick="settingsService.toggleToken('armor')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="armorTokenButtonIcon"></span> Armor
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="focusTokenButton"
+                                            onclick="settingsService.toggleToken('focus')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="focusTokenButtonIcon"></span> Focus
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="threatTokenButton"
+                                            onclick="settingsService.toggleToken('threat')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="threatTokenButtonIcon"></span> Threat
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="supplyTokenButton"
+                                            onclick="settingsService.toggleToken('supply')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="supplyTokenButtonIcon"></span> Supply
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="inspirationTokenButton"
+                                            onclick="settingsService.toggleToken('inspiration')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="inspirationTokenButtonIcon"></span>
+                                            Inspiration
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="snareTokenButton"
+                                            onclick="settingsService.toggleToken('snare')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="snareTokenButtonIcon"></span> Snare
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="melodyTokenButton"
+                                            onclick="settingsService.toggleToken('melody')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="melodyTokenButtonIcon"></span> Melody
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-main h-100 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Which products do you own?</h5>
+                                <h6 class="card-subtitle">
+                                    This will impact what content will be available to you when using the game
+                                    generator.
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="coreGameButton"
+                                            onclick="settingsService.toggleProduct('coreGame')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="coreGameButtonIcon"></span> Core Game
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="stretchGoalsButton"
+                                            onclick="settingsService.toggleProduct('stretchGoals')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="stretchGoalsButtonIcon"></span> Stretch
+                                            Goals
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="ruinsOfArkenspireButton"
+                                            onclick="settingsService.toggleProduct('ruinsOfArkenspire')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="ruinsOfArkenspireButtonIcon"></span>
+                                            Ruins of Arkenspire
+                                        </button>
+
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="theFirstFourButton"
+                                            onclick="settingsService.toggleProduct('theFirstFour')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="theFirstFourButtonIcon"></span> The
+                                            First Four
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-main h-100 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Include features deck?</h5>
+                                <h6 class="card-subtitle">
+                                    The rules in a standard game specify that a feature deck should consist of 7 feature
+                                    cards plus the "Altar Found" card. You can specify below whether the game generator
+                                    will include a features deck during game generation.
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="includeFeaturesDeckButton"
+                                            onclick="settingsService.toggleSetting('includeFeaturesDeck')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="includeFeaturesDeckButtonIcon"></span>
+                                            Include Features Deck
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-main h-100 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Include spoilers?</h5>
+                                <h6 class="card-subtitle">
+                                    Some products include secret boxes that are only meant to be opened after playing
+                                    through the story. Enabling this option will allow this content to be included in
+                                    game generation.
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="includeSpoilersButton"
+                                            onclick="settingsService.toggleSetting('includeSpoilers')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="includeSpoilersButtonIcon"></span>
+                                            Include Spoilers
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-main h-100 text-left">
+                            <div class="card-body">
+                                <h5 class="card-title">Enable sound effects?</h5>
+                                <h6 class="card-subtitle">
+                                    Some features of this companion app will play sound effects, such as the dice
+                                    roller. You can enable or disable it below.
+                                </h6>
+                                <h6 class="card-subtitle mt-2">
+                                    Note: Sound effects may not work on older versions of iOS.
+                                </h6>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <button
+                                            class="btn btn-success btn-block btn-lg"
+                                            id="soundEffectsButton"
+                                            onclick="settingsService.toggleSetting('soundEffects')"
+                                        >
+                                            <span class="fa fa-fw fa-check" id="soundEffectsButtonIcon"></span> Sound
+                                            Effects
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button
+                            class="btn btn-secondary btn-block btn-lg"
+                            title="Return To Menu"
+                            onclick="pageService.changePage('home')"
+                        >
+                            <i class="fas fa-fw fa-arrow-left"></i> Return To Menu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/jquery-3.5.1.slim.min.js"></script>
+        <script src="/js/popper.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+
+        <script src="/js/fontawesome-free-5.15.1.min.js"></script>
+
+        <script src="/js/game-generator.js"></script>
+        <script src="/js/dice-roller.js"></script>
+
+        <script src="/js/tokenTracker.service.js"></script>
+        <script src="/js/settings.service.js"></script>
+        <script src="/js/page.service.js"></script>
+        <script src="/js/utility.service.js"></script>
+
+        <script src="/js/app.js"></script>
+
+        <script type="module">
+            import {
+                Workbox,
+                messageSW,
+            } from "https://storage.googleapis.com/workbox-cdn/releases/5.1.4/workbox-window.prod.mjs";
+            if ("serviceWorker" in navigator) {
+                const wb = new Workbox("/sw.js");
+                let registration;
+                const showSkipWaitingPrompt = (event) => {
+                    const prompt = showUpdatePanel({
+                        onAccept: async () => {
+                            wb.addEventListener("controlling", (event) => {
+                                window.location.reload();
+                            });
+                            if (registration && registration.waiting) {
+                                messageSW(registration.waiting, { type: "SKIP_WAITING" });
+                            }
+                        },
+                    });
+                };
+                wb.addEventListener("waiting", showSkipWaitingPrompt);
+                wb.addEventListener("externalwaiting", showSkipWaitingPrompt);
+                wb.register().then((r) => (registration = r));
+            }
+        </script>
+
+        <audio src="/sound/dice-roll-single.wav" id="diceRollSingleAudio" crossorigin="anonymous"></audio>
+        <audio src="/sound/dice-roll-multiple.wav" id="diceRollMultipleAudio" crossorigin="anonymous"></audio>
+    </body>
+</html>
