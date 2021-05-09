@@ -13,4 +13,10 @@ This is a companion app for the board game [Altar Quest](https://boardgamegeek.c
 
 This application is just a standard HTML/JavaScript/CSS application. It uses [Workbox](https://developers.google.com/web/tools/workbox) to regenerate the Progressive Web Application service worker. If you make changes to the code, you should just run `workbox injectManifest` in the root directory, to ensure that the cache has been updated.
 
-You can run the application under any basic web server. I personally just use the [http-server] (https://www.npmjs.com/package/http-server) NodeJS package.
+## Running the Application
+
+You can run the application under any standard web server. I personally just use the [http-server](https://www.npmjs.com/package/http-server) NodeJS package during development.
+
+## Supporting the Development
+
+At this stage, I am the sole contributor to the application so if you wanted to shout me a cider or hot chocolate, you can do so via [PayPal](https://paypal.me/jordanberlyn). I'll aim to fix issues as quickly as possible, but I am also happy to review any pull requests people contribute directly to the project.
