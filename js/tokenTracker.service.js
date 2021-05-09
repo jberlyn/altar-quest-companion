@@ -104,10 +104,10 @@ class TokenTrackerService {
     updateActionsOnDOM() {
         let actionsRemaining = 3;
         for (let i = 0; i < 3; i++) {
-            let actionImage = "/img/action-active.png";
+            let actionImage = "./img/action-active.png";
             if (!this.actions[i]) {
                 actionsRemaining--;
-                actionImage = "/img/action-inactive.png";
+                actionImage = "./img/action-inactive.png";
             }
             $("#action" + (i + 1)).attr("src", actionImage);
             $("#endTurnButton").text(actionsRemaining + " actions remaining");
